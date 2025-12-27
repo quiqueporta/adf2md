@@ -169,6 +169,28 @@ describe("adf2md", function()
     end)
   end)
 
+  describe("taskList", function()
+    it("converts task items with state", function()
+      local doc = {
+        type = "taskList",
+        content = {
+          {
+            type = "taskItem",
+            attrs = { state = "TODO" },
+            content = {{ type = "text", text = "Pending task" }}
+          },
+          {
+            type = "taskItem",
+            attrs = { state = "DONE" },
+            content = {{ type = "text", text = "Done task" }}
+          }
+        }
+      }
+      local result = adf2md(doc)
+      assert.are.equal("- [ ] Pending task\n- [x] Done task", result)
+    end)
+  end)
+
   describe("panel", function()
     it("converts to blockquote", function()
       local doc = {

@@ -56,6 +56,38 @@ node_handlers.orderedList = function(node, convert_node)
   return table.concat(items, "\n")
 end
 
+node_handlers.taskList = function(node, convert_node)
+  local items = {}
+  for _, item in ipairs(node.content or {}) do
+    local checkbox = "[ ]"
+    if item.attrs and item.attrs.state == "DONE" then
+      checkbox = "[x]"
+    end
+    local content = ""
+    for _, child in ipairs(item.content or {}) do
+      if child.type == "text" then
+        content = content .. apply_marks(child.text, child.marks)
+      else
+        content = content .. convert_node(child)
+      end
+    end
+    table.insert(items, "- " .. checkbox .. " " .. content)
+  end
+  return table.concat(items, "\n")
+end
+
+node_handlers.taskItem = function(node, convert_node)
+  local content = ""
+  for _, child in ipairs(node.content or {}) do
+    if child.type == "text" then
+      content = content .. apply_marks(child.text, child.marks)
+    else
+      content = content .. convert_node(child)
+    end
+  end
+  return content
+end
+
 node_handlers.listItem = function(node, convert_node)
   return get_list_item_content(node, convert_node)
 end
