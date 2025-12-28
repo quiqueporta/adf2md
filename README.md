@@ -53,6 +53,7 @@ print(markdown)  -- Output: **Hello **World
 | mention       | `@username`                              |
 | emoji         | `:shortName:`                            |
 | status        | Colored emoji + text (e.g., `🟢 DONE`)   |
+| inlineCard    | `[ISSUE-123](url)` (extracts Jira key)   |
 | hardBreak     | Two spaces + newline                     |
 
 ## Supported Marks

@@ -504,6 +504,20 @@ describe("adf2md", function()
 		end)
 	end)
 
+	describe("inlineCard", function()
+		it("converts to markdown link", function()
+			local doc = {
+				type = "paragraph",
+				content = {
+					{ type = "text", text = "See " },
+					{ type = "inlineCard", attrs = { url = "https://jira.example.com/browse/PROJ-123" } },
+				},
+			}
+			local result = adf2md(doc)
+			assert.are.equal("See [PROJ-123](https://jira.example.com/browse/PROJ-123)", result)
+		end)
+	end)
+
 	describe("unsupported type", function()
 		it("shows marker for unknown node type", function()
 			local doc = {
