@@ -179,6 +179,19 @@ node_handlers.codeBlock = function(node, convert_node)
   return "```" .. language .. "\n" .. content .. "\n```"
 end
 
+node_handlers.media = function(node, convert_node)
+  local url = node.attrs and node.attrs.url or ""
+  return "![](" .. url .. ")"
+end
+
+node_handlers.mediaSingle = function(node, convert_node)
+  local content = ""
+  for _, child in ipairs(node.content or {}) do
+    content = content .. convert_node(child)
+  end
+  return content
+end
+
 node_handlers.rule = function(node, convert_node)
   return "---"
 end

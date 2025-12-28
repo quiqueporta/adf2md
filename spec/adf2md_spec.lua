@@ -342,6 +342,25 @@ describe("adf2md", function()
     end)
   end)
 
+  describe("mediaSingle", function()
+    it("converts external image to markdown image", function()
+      local doc = {
+        type = "mediaSingle",
+        content = {
+          {
+            type = "media",
+            attrs = {
+              type = "external",
+              url = "https://example.com/image.png"
+            }
+          }
+        }
+      }
+      local result = adf2md(doc)
+      assert.are.equal("![](https://example.com/image.png)", result)
+    end)
+  end)
+
   describe("rule", function()
     it("converts to horizontal line", function()
       local doc = { type = "rule" }
