@@ -1,5 +1,9 @@
 # adf2md
 
+[![Tests](https://github.com/quiqueporta/adf2md/actions/workflows/tests.yml/badge.svg)](https://github.com/quiqueporta/adf2md/actions/workflows/tests.yml)
+![Lua](https://img.shields.io/badge/Lua-5.1%20|%205.2%20|%205.3%20|%205.4-blue.svg)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 A Lua library to convert [Atlassian Document Format (ADF)](https://developer.atlassian.com/cloud/jira/platform/apis/document/structure/) to Markdown.
 
 ## Installation
