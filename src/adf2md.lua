@@ -100,6 +100,14 @@ node_handlers.listItem = function(node, convert_node)
   return get_list_item_content(node, convert_node)
 end
 
+node_handlers.blockquote = function(node, convert_node)
+  local content = ""
+  for _, child in ipairs(node.content or {}) do
+    content = content .. convert_node(child)
+  end
+  return "> " .. content
+end
+
 node_handlers.panel = function(node, convert_node)
   local content = ""
   for _, child in ipairs(node.content or {}) do

@@ -216,6 +216,19 @@ describe("adf2md", function()
     end)
   end)
 
+  describe("blockquote", function()
+    it("converts to blockquote", function()
+      local doc = {
+        type = "blockquote",
+        content = {
+          { type = "paragraph", content = {{ type = "text", text = "Quoted text" }} }
+        }
+      }
+      local result = adf2md(doc)
+      assert.are.equal("> Quoted text", result)
+    end)
+  end)
+
   describe("panel", function()
     it("converts to blockquote", function()
       local doc = {
