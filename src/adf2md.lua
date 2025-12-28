@@ -1,3 +1,11 @@
+local mark_handlers = {
+  strong = function(text) return "**" .. text .. "**" end,
+  em = function(text) return "*" .. text .. "*" end,
+  code = function(text) return "`" .. text .. "`" end,
+  strike = function(text) return "~~" .. text .. "~~" end,
+  link = function(text, attrs) return "[" .. text .. "](" .. attrs.href .. ")" end,
+}
+
 local function apply_marks(text, marks)
   if not marks then
     return text
@@ -5,16 +13,9 @@ local function apply_marks(text, marks)
 
   local result = text
   for _, mark in ipairs(marks) do
-    if mark.type == "strong" then
-      result = "**" .. result .. "**"
-    elseif mark.type == "em" then
-      result = "*" .. result .. "*"
-    elseif mark.type == "link" then
-      result = "[" .. result .. "](" .. mark.attrs.href .. ")"
-    elseif mark.type == "code" then
-      result = "`" .. result .. "`"
-    elseif mark.type == "strike" then
-      result = "~~" .. result .. "~~"
+    local handler = mark_handlers[mark.type]
+    if handler then
+      result = handler(result, mark.attrs)
     end
   end
   return result
@@ -22,18 +23,24 @@ end
 
 local node_handlers = {}
 
-node_handlers.paragraph = function(node, convert_node)
-  local result = ""
+local function collect_children(node, convert_node)
+  local parts = {}
   for _, child in ipairs(node.content or {}) do
-    if child.type == "text" then
-      result = result .. apply_marks(child.text, child.marks)
-    elseif child.type == "hardBreak" then
-      result = result .. "  \n"
-    else
-      result = result .. convert_node(child)
-    end
+    table.insert(parts, convert_node(child))
   end
-  return result
+  return table.concat(parts)
+end
+
+node_handlers.text = function(node, convert_node)
+  return apply_marks(node.text, node.marks)
+end
+
+node_handlers.hardBreak = function(node, convert_node)
+  return "  \n"
+end
+
+node_handlers.paragraph = function(node, convert_node)
+  return collect_children(node, convert_node)
 end
 
 node_handlers.mention = function(node, convert_node)
@@ -58,18 +65,10 @@ node_handlers.status = function(node, convert_node)
   return emoji .. " " .. text
 end
 
-local function get_list_item_content(item, convert_node)
-  local content = ""
-  for _, child in ipairs(item.content or {}) do
-    content = content .. convert_node(child)
-  end
-  return content
-end
-
 node_handlers.bulletList = function(node, convert_node)
   local items = {}
   for _, item in ipairs(node.content or {}) do
-    table.insert(items, "+ " .. get_list_item_content(item, convert_node))
+    table.insert(items, "+ " .. collect_children(item, convert_node))
   end
   return table.concat(items, "\n")
 end
@@ -77,7 +76,7 @@ end
 node_handlers.orderedList = function(node, convert_node)
   local items = {}
   for i, item in ipairs(node.content or {}) do
-    table.insert(items, i .. ". " .. get_list_item_content(item, convert_node))
+    table.insert(items, i .. ". " .. collect_children(item, convert_node))
   end
   return table.concat(items, "\n")
 end
@@ -89,41 +88,21 @@ node_handlers.taskList = function(node, convert_node)
     if item.attrs and item.attrs.state == "DONE" then
       checkbox = "[x]"
     end
-    local content = ""
-    for _, child in ipairs(item.content or {}) do
-      if child.type == "text" then
-        content = content .. apply_marks(child.text, child.marks)
-      else
-        content = content .. convert_node(child)
-      end
-    end
-    table.insert(items, "- " .. checkbox .. " " .. content)
+    table.insert(items, "- " .. checkbox .. " " .. collect_children(item, convert_node))
   end
   return table.concat(items, "\n")
 end
 
 node_handlers.taskItem = function(node, convert_node)
-  local content = ""
-  for _, child in ipairs(node.content or {}) do
-    if child.type == "text" then
-      content = content .. apply_marks(child.text, child.marks)
-    else
-      content = content .. convert_node(child)
-    end
-  end
-  return content
+  return collect_children(node, convert_node)
 end
 
 node_handlers.listItem = function(node, convert_node)
-  return get_list_item_content(node, convert_node)
+  return collect_children(node, convert_node)
 end
 
 node_handlers.blockquote = function(node, convert_node)
-  local content = ""
-  for _, child in ipairs(node.content or {}) do
-    content = content .. convert_node(child)
-  end
-  return "> " .. content
+  return "> " .. collect_children(node, convert_node)
 end
 
 node_handlers.panel = function(node, convert_node)
@@ -136,28 +115,15 @@ node_handlers.panel = function(node, convert_node)
   }
   local panel_type = node.attrs and node.attrs.panelType or "info"
   local alert_type = panel_type_map[panel_type] or "NOTE"
-
-  local content = ""
-  for _, child in ipairs(node.content or {}) do
-    content = content .. convert_node(child)
-  end
-  return "> [!" .. alert_type .. "]\n> " .. content
+  return "> [!" .. alert_type .. "]\n> " .. collect_children(node, convert_node)
 end
 
 node_handlers.tableCell = function(node, convert_node)
-  local content = ""
-  for _, child in ipairs(node.content or {}) do
-    content = content .. convert_node(child)
-  end
-  return content
+  return collect_children(node, convert_node)
 end
 
 node_handlers.tableHeader = function(node, convert_node)
-  local content = ""
-  for _, child in ipairs(node.content or {}) do
-    content = content .. convert_node(child)
-  end
-  return content
+  return collect_children(node, convert_node)
 end
 
 node_handlers.tableRow = function(node, convert_node)
@@ -187,13 +153,7 @@ end
 node_handlers.heading = function(node, convert_node)
   local level = node.attrs and node.attrs.level or 1
   local prefix = string.rep("#", level)
-  local content = ""
-  for _, child in ipairs(node.content or {}) do
-    if child.type == "text" then
-      content = content .. apply_marks(child.text, child.marks)
-    end
-  end
-  return prefix .. " " .. content
+  return prefix .. " " .. collect_children(node, convert_node)
 end
 
 node_handlers.codeBlock = function(node, convert_node)
@@ -213,11 +173,7 @@ node_handlers.media = function(node, convert_node)
 end
 
 node_handlers.mediaSingle = function(node, convert_node)
-  local content = ""
-  for _, child in ipairs(node.content or {}) do
-    content = content .. convert_node(child)
-  end
-  return content
+  return collect_children(node, convert_node)
 end
 
 node_handlers.rule = function(node, convert_node)
