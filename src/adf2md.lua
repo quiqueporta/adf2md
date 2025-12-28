@@ -13,6 +13,8 @@ local function apply_marks(text, marks)
       result = "[" .. result .. "](" .. mark.attrs.href .. ")"
     elseif mark.type == "code" then
       result = "`" .. result .. "`"
+    elseif mark.type == "strike" then
+      result = "~~" .. result .. "~~"
     end
   end
   return result

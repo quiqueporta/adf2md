@@ -104,6 +104,17 @@ describe("adf2md", function()
       local result = adf2md(doc)
       assert.are.equal("`const x`", result)
     end)
+
+    it("converts strikethrough", function()
+      local doc = {
+        type = "paragraph",
+        content = {
+          { type = "text", text = "deleted", marks = {{ type = "strike" }} }
+        }
+      }
+      local result = adf2md(doc)
+      assert.are.equal("~~deleted~~", result)
+    end)
   end)
 
   describe("hardBreak", function()
