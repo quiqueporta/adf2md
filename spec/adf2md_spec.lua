@@ -489,4 +489,19 @@ describe("adf2md", function()
     end)
   end)
 
+  describe("unsupported type", function()
+    it("shows marker for unknown node type", function()
+      local doc = {
+        type = "paragraph",
+        content = {
+          { type = "text", text = "Before " },
+          { type = "unknownType" },
+          { type = "text", text = " After" }
+        }
+      }
+      local result = adf2md(doc)
+      assert.are.equal("Before [unsupported: unknownType] After", result)
+    end)
+  end)
+
 end)

@@ -229,7 +229,7 @@ local function convert_node(node)
   if handler then
     return handler(node, convert_node)
   end
-  return ""
+  return "[unsupported: " .. (node.type or "unknown") .. "]"
 end
 
 local function adf2md(document)
