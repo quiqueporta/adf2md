@@ -1,9 +1,9 @@
 package = "adf2md"
-version = "0.1.0-1"
+version = "0.1.0-2"
 
 source = {
   url = "git://github.com/quiqueporta/adf2md.git",
-  tag = "v0.1.0"
+  tag = "v0.1.0-2"
 }
 
 description = {
