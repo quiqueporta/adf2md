@@ -146,6 +146,20 @@ describe("adf2md", function()
     end)
   end)
 
+  describe("emoji", function()
+    it("converts to shortName", function()
+      local doc = {
+        type = "paragraph",
+        content = {
+          { type = "text", text = "Great job " },
+          { type = "emoji", attrs = { shortName = ":thumbsup:" } }
+        }
+      }
+      local result = adf2md(doc)
+      assert.are.equal("Great job :thumbsup:", result)
+    end)
+  end)
+
   describe("bulletList", function()
     it("converts list items", function()
       local doc = {

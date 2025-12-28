@@ -40,6 +40,10 @@ node_handlers.mention = function(node, convert_node)
   return node.attrs and node.attrs.text or ""
 end
 
+node_handlers.emoji = function(node, convert_node)
+  return node.attrs and node.attrs.shortName or ""
+end
+
 local function get_list_item_content(item, convert_node)
   local content = ""
   for _, child in ipairs(item.content or {}) do
