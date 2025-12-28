@@ -44,6 +44,20 @@ node_handlers.emoji = function(node, convert_node)
   return node.attrs and node.attrs.shortName or ""
 end
 
+node_handlers.status = function(node, convert_node)
+  local color_map = {
+    blue = "🔵",
+    green = "🟢",
+    yellow = "🟡",
+    red = "🔴",
+    neutral = "⚪"
+  }
+  local color = node.attrs and node.attrs.color or "neutral"
+  local text = node.attrs and node.attrs.text or ""
+  local emoji = color_map[color] or "⚪"
+  return emoji .. " " .. text
+end
+
 local function get_list_item_content(item, convert_node)
   local content = ""
   for _, child in ipairs(item.content or {}) do

@@ -160,6 +160,63 @@ describe("adf2md", function()
     end)
   end)
 
+  describe("status", function()
+    it("converts blue status", function()
+      local doc = {
+        type = "paragraph",
+        content = {
+          { type = "status", attrs = { text = "IN PROGRESS", color = "blue" } }
+        }
+      }
+      local result = adf2md(doc)
+      assert.are.equal("🔵 IN PROGRESS", result)
+    end)
+
+    it("converts green status", function()
+      local doc = {
+        type = "paragraph",
+        content = {
+          { type = "status", attrs = { text = "DONE", color = "green" } }
+        }
+      }
+      local result = adf2md(doc)
+      assert.are.equal("🟢 DONE", result)
+    end)
+
+    it("converts yellow status", function()
+      local doc = {
+        type = "paragraph",
+        content = {
+          { type = "status", attrs = { text = "TODO", color = "yellow" } }
+        }
+      }
+      local result = adf2md(doc)
+      assert.are.equal("🟡 TODO", result)
+    end)
+
+    it("converts red status", function()
+      local doc = {
+        type = "paragraph",
+        content = {
+          { type = "status", attrs = { text = "BLOCKED", color = "red" } }
+        }
+      }
+      local result = adf2md(doc)
+      assert.are.equal("🔴 BLOCKED", result)
+    end)
+
+    it("converts neutral status", function()
+      local doc = {
+        type = "paragraph",
+        content = {
+          { type = "status", attrs = { text = "UNKNOWN", color = "neutral" } }
+        }
+      }
+      local result = adf2md(doc)
+      assert.are.equal("⚪ UNKNOWN", result)
+    end)
+  end)
+
   describe("bulletList", function()
     it("converts list items", function()
       local doc = {
