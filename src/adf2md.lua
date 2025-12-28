@@ -29,9 +29,15 @@ node_handlers.paragraph = function(node, convert_node)
       result = result .. apply_marks(child.text, child.marks)
     elseif child.type == "hardBreak" then
       result = result .. "  \n"
+    else
+      result = result .. convert_node(child)
     end
   end
   return result
+end
+
+node_handlers.mention = function(node, convert_node)
+  return node.attrs and node.attrs.text or ""
 end
 
 local function get_list_item_content(item, convert_node)

@@ -132,6 +132,20 @@ describe("adf2md", function()
     end)
   end)
 
+  describe("mention", function()
+    it("converts to @username", function()
+      local doc = {
+        type = "paragraph",
+        content = {
+          { type = "text", text = "Hello " },
+          { type = "mention", attrs = { id = "123", text = "@john" } }
+        }
+      }
+      local result = adf2md(doc)
+      assert.are.equal("Hello @john", result)
+    end)
+  end)
+
   describe("bulletList", function()
     it("converts list items", function()
       local doc = {
