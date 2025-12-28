@@ -8,6 +8,14 @@ A Lua library to convert [Atlassian Document Format (ADF)](https://developer.atl
 
 ## Installation
 
+### Using LuaRocks
+
+```bash
+luarocks install adf2md
+```
+
+### Manual
+
 Copy `src/adf2md.lua` to your project or add the `src` directory to your Lua path.
 
 ## Usage
