@@ -109,11 +109,21 @@ node_handlers.blockquote = function(node, convert_node)
 end
 
 node_handlers.panel = function(node, convert_node)
+  local panel_type_map = {
+    info = "NOTE",
+    note = "NOTE",
+    warning = "WARNING",
+    error = "CAUTION",
+    success = "TIP"
+  }
+  local panel_type = node.attrs and node.attrs.panelType or "info"
+  local alert_type = panel_type_map[panel_type] or "NOTE"
+
   local content = ""
   for _, child in ipairs(node.content or {}) do
     content = content .. convert_node(child)
   end
-  return "> " .. content
+  return "> [!" .. alert_type .. "]\n> " .. content
 end
 
 node_handlers.tableCell = function(node, convert_node)

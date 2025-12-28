@@ -230,15 +230,64 @@ describe("adf2md", function()
   end)
 
   describe("panel", function()
-    it("converts to blockquote", function()
+    it("converts info panel to NOTE alert", function()
       local doc = {
         type = "panel",
+        attrs = { panelType = "info" },
         content = {
-          { type = "paragraph", content = {{ type = "text", text = "Quote text" }} }
+          { type = "paragraph", content = {{ type = "text", text = "Info text" }} }
         }
       }
       local result = adf2md(doc)
-      assert.are.equal("> Quote text", result)
+      assert.are.equal("> [!NOTE]\n> Info text", result)
+    end)
+
+    it("converts warning panel to WARNING alert", function()
+      local doc = {
+        type = "panel",
+        attrs = { panelType = "warning" },
+        content = {
+          { type = "paragraph", content = {{ type = "text", text = "Warning text" }} }
+        }
+      }
+      local result = adf2md(doc)
+      assert.are.equal("> [!WARNING]\n> Warning text", result)
+    end)
+
+    it("converts error panel to CAUTION alert", function()
+      local doc = {
+        type = "panel",
+        attrs = { panelType = "error" },
+        content = {
+          { type = "paragraph", content = {{ type = "text", text = "Error text" }} }
+        }
+      }
+      local result = adf2md(doc)
+      assert.are.equal("> [!CAUTION]\n> Error text", result)
+    end)
+
+    it("converts note panel to NOTE alert", function()
+      local doc = {
+        type = "panel",
+        attrs = { panelType = "note" },
+        content = {
+          { type = "paragraph", content = {{ type = "text", text = "Note text" }} }
+        }
+      }
+      local result = adf2md(doc)
+      assert.are.equal("> [!NOTE]\n> Note text", result)
+    end)
+
+    it("converts success panel to TIP alert", function()
+      local doc = {
+        type = "panel",
+        attrs = { panelType = "success" },
+        content = {
+          { type = "paragraph", content = {{ type = "text", text = "Success text" }} }
+        }
+      }
+      local result = adf2md(doc)
+      assert.are.equal("> [!TIP]\n> Success text", result)
     end)
   end)
 
