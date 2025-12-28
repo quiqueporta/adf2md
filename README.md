@@ -75,6 +75,25 @@ When the library encounters an unsupported node type, it outputs a marker:
 
 This makes it easy to identify which ADF features are not yet converted.
 
+## Development
+
+### Requirements
+
+- Lua 5.1+
+- [Busted](https://lunarmodules.github.io/busted/) (testing framework)
+
+### Install dependencies
+
+```bash
+luarocks install busted
+```
+
+### Run tests
+
+```bash
+busted
+```
+
 ## License
 
 MIT License - see [LICENSE](LICENSE) file.
